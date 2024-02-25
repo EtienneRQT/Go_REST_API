@@ -14,12 +14,12 @@ func main() {
 	server.Run("localhost:8080")
 }
 
-func getEvents(context *gin.Context)  {
+func getEvents(context *gin.Context) {
 	events := models.GetAllEvents()
 	context.JSON(http.StatusOK, events)
 }
 
-func createEvent(context *gin.Context)  {
+func createEvent(context *gin.Context) {
 	var event models.Event
 	if err := context.BindJSON(&event); err != nil {
 		context.JSON(http.StatusBadRequest, err.Error())
