@@ -9,10 +9,9 @@ import (
 
 func main() {
 	server := gin.Default()
-server.GET("/events", getEvents)
+	server.GET("/events", getEvents)
 	server.POST("/events", createEvent)
-
-server.Run("localhost:8080")
+	server.Run("localhost:8080")
 }
 
 func getEvents(context *gin.Context)  {
