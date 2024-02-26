@@ -3,11 +3,13 @@ package main
 import (
 	"net/http"
 
+	"example.com/api/db"
 	"example.com/api/models"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	db.InitDB()
 	server := gin.Default()
 	server.GET("/events", getEvents)
 	server.POST("/events", createEvent)
@@ -15,7 +17,10 @@ func main() {
 }
 
 func getEvents(context *gin.Context) {
-	events := models.GetAllEvents()
+	events, err := models.GetAllEvents()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, err.Error())
+	}
 	context.JSON(http.StatusOK, events)
 }
 
