@@ -44,7 +44,11 @@ func (e *Event) Save() error {
 	return nil
 }
 
-// GetAllEvents returns all events.
+
+// GetAllEvents retrieves all events from the database.
+// It executes a SELECT query to get all rows from the events table.
+// The query result rows are scanned into Event structs and collected in a slice.
+// Returns the slice of Event structs, or any error from the query.
 func GetAllEvents() ([]Event, error) {
 	query := "SELECT id, name, description, location, dateTime, user_id FROM events"
 	rows, err := db.DB.Query(query)
