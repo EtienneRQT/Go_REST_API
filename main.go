@@ -30,6 +30,10 @@ func createEvent(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	event.Save()
+	err := event.Save()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
 	context.JSON(http.StatusCreated, event)
 }
