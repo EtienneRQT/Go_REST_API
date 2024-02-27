@@ -44,6 +44,44 @@ func (e *Event) Save() error {
 	return nil
 }
 
+// Update updates the Event in the database.
+// It prepares an UPDATE statement using the Event fields as parameters,
+// executes it, and returns any error.
+// The WHERE clause matches on the Event's ID to update that row.
+func (e *Event) Update() error {
+	query := `UPDATE events 
+	SET name =?, description =?, location =?, dateTime =?, user_id =? 
+	WHERE id =?`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(
+		e.Name,
+		e.Description,
+		e.Location,
+		e.DateTime,
+		e.UserID,
+		e.ID)
+
+	return err
+}
+
+// Delete deletes an Event from the database.
+// It executes a DELETE query using the event's ID to delete the corresponding row.
+// Returns any error from the query.
+func (e *Event) Delete(id int64) error {
+	query := "DELETE FROM events WHERE id =?"
+	_, err := db.DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // GetEventByID retrieves an Event by its ID from the database.
 // It executes a SELECT query using the provided ID and scans the result
 // into an Event struct. Returns the Event and any error from the query.
