@@ -47,7 +47,7 @@ func (e *Event) Save() error {
 // GetEventByID retrieves an Event by its ID from the database.
 // It executes a SELECT query using the provided ID and scans the result
 // into an Event struct. Returns the Event and any error from the query.
-func GetEventByID(id int64) (Event, error) {
+func GetEventByID(id int64) (*Event, error) {
 	query := "SELECT id, name, description, location, dateTime, user_id FROM events WHERE id =?"
 	row := db.DB.QueryRow(query, id)
 	var e Event
@@ -59,9 +59,9 @@ func GetEventByID(id int64) (Event, error) {
 		&e.DateTime,
 		&e.UserID)
 	if err != nil {
-		return Event{}, err
+		return nil, err
 	}
-	return e, nil
+	return &e, nil
 }
 
 // GetAllEvents retrieves all events from the database.
