@@ -31,7 +31,7 @@ func getEvent(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid ID"})
 		return
 	}
-	event, err := models.GetEvent(eventID)
+	event, err := models.GetEventByID(eventID)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, err.Error())
 	}
