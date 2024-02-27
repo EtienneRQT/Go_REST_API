@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 
 	"example.com/api/db"
 	"example.com/api/models"
@@ -14,8 +15,27 @@ func main() {
 	db.InitDB()
 	server := gin.Default()
 	server.GET("/events", getEvents)
+	server.GET("/events/:id", getEvent)
 	server.POST("/events", createEvent)
 	server.Run("localhost:8080")
+}
+
+// getEvent retrieves an event by ID from the database.
+// It parses the ID from the URL parameter, queries the database,
+// and returns the event as JSON. If there is an error parsing the ID
+// or querying the database, it returns an error response.
+func getEvent(context *gin.Context) {
+	id := context.Param("id")
+	eventID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid ID"})
+		return
+	}
+	event, err := models.GetEvent(eventID)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, err.Error())
+	}
+	context.JSON(http.StatusOK, event)
 }
 
 // getEvents handles GET requests to retrieve all events.

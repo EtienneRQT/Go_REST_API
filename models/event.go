@@ -10,7 +10,7 @@ import (
 // The struct fields are validated as required.
 type Event struct {
 	ID          int64     `binding:"required"`
-	Name        string    ` binding:"required"`
+	Name        string    `binding:"required"`
 	Description string    `binding:"required"`
 	Location    string    `binding:"required"`
 	DateTime    time.Time `binding:"required"`
@@ -44,6 +44,25 @@ func (e *Event) Save() error {
 	return nil
 }
 
+// GetEventByID retrieves an Event by its ID from the database.
+// It executes a SELECT query using the provided ID and scans the result
+// into an Event struct. Returns the Event and any error from the query.
+func GetEventByID(id int64) (Event, error) {
+	query := "SELECT id, name, description, location, dateTime, user_id FROM events WHERE id =?"
+	row := db.DB.QueryRow(query, id)
+	var e Event
+	err := row.Scan(
+		&e.ID,
+		&e.Name,
+		&e.Description,
+		&e.Location,
+		&e.DateTime,
+		&e.UserID)
+	if err != nil {
+		return Event{}, err
+	}
+	return e, nil
+}
 
 // GetAllEvents retrieves all events from the database.
 // It executes a SELECT query to get all rows from the events table.
