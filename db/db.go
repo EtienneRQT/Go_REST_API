@@ -25,12 +25,14 @@ func InitDB() {
 	createTables()
 }
 
-// createTables creates the events table in the database if it does not already exist.
-// It executes a CREATE TABLE statement and handles any errors.
+// createTables initializes the database by creating the users and events tables.
+// It creates each table by executing a SQL CREATE TABLE statement.
+// If there is an error creating a table, it panics.
 func createTables() {
 	createUsersTable := `CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY AUTOINCREMENT, 
-		username TEXT NOT NULL, 
+		username TEXT NOT NULL,
+		email TEXT NOT NULL,
 		password TEXT NOT NULL)`
 
 	_, err := DB.Exec(createUsersTable)
@@ -45,7 +47,7 @@ func createTables() {
 		description TEXT NOT NULL,  
 		location TEXT NOT NULL, 
 		dateTime DATETIME NOT NULL, 
-		user_id INTEGER NOT NULL
+		user_id INTEGER NOT NULL,
 		FOREIGN KEY (user_id) REFERENCES users(id))`
 
 	_, err = DB.Exec(createEventsTable)
