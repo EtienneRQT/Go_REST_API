@@ -50,7 +50,7 @@ func (user *User) Login() error {
 		return err
 	}
 	defer stmt.Close()
-	hashedPassword := utils.HashPassword(user.Password)
+
 	var requiredPassword string
 	err = stmt.QueryRow(user.Email).Scan(&requiredPassword)
 	if err == sql.ErrNoRows {
@@ -59,7 +59,7 @@ func (user *User) Login() error {
 		return err
 	}
 
-	if !utils.CheckPasswordHash(requiredPassword, hashedPassword) {
+	if !utils.CheckPasswordHash(user.Password, requiredPassword) {
 		return errors.New("Invalid password")
 	}
 
