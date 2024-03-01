@@ -22,5 +22,21 @@ func signup(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusCreated, user)
+}
 
+// login handles user authentication. It binds the JSON body to a User model,
+// validates the user credentials, and returns the authenticated user or any errors.
+func login(context *gin.Context) {
+	var user models.User
+	if err := context.BindJSON(&user); err != nil {
+		context.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := user.Login(); err != nil {
+		context.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	context.JSON(http.StatusOK, user)
 }

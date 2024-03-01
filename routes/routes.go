@@ -4,13 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// RegisterRoutes registers the routes for the Gin server.
-// It registers the following routes:
-// - GET /events: Handles getting all events
-// - GET /events/:id: Handles getting a single event by ID
-// - POST /events: Handles creating a new event
-// - PUT /events/:id: Handles updating an existing event by ID
-// - DELETE /events/:id: Handles deleting an event by ID
+// RegisterRoutes sets up the routing for the server with the given gin Engine.
+// It defines routes for event operations such as retrieving, creating, updating,
+// and deleting events, as well as a signup route.
 func RegisterRoutes(server *gin.Engine) {
 	server.GET("/events", getEvents)
 	server.GET("/events/:id", getEvent)
@@ -18,4 +14,5 @@ func RegisterRoutes(server *gin.Engine) {
 	server.PUT("/events/:id", updateEvent)
 	server.DELETE("/events/:id", deleteEvent)
 	server.POST("/signup", signup)
+	server.POST("/login", login)
 }
