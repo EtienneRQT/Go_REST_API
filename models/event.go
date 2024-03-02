@@ -9,7 +9,7 @@ import (
 // Event represents an event with ID, name, description, location, date/time, and user ID fields.
 // The struct fields are validated as required.
 type Event struct {
-	ID          int64     `binding:"required"`
+	ID          int64     
 	Name        string    `binding:"required"`
 	Description string    `binding:"required"`
 	Location    string    `binding:"required"`

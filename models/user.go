@@ -11,7 +11,7 @@ import (
 // User represents a user account with ID, email and password.
 // User is used for user account management and authentication.
 type User struct {
-	ID       int64  `binding:"required"`
+	ID       int64
 	Email    string `binding:"required"`
 	Password string `binding:"required"`
 }
@@ -20,7 +20,7 @@ type User struct {
 // It hashes the password before inserting for security.
 // Returns any errors that occur when preparing/executing the INSERT statement.
 func (user *User) Save() error {
-	query := "INSERT INTO users (email, password) VALUES (?,?,?)"
+	query := "INSERT INTO users (email, password) VALUES (?,?)"
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func (user *User) Save() error {
 // password error if the password does not match, or any other
 // errors that occur.
 func (user *User) Login() error {
-	query := "SELECT password FROM users WHERE email = ?"
+	query := "SELECT password, id FROM users WHERE email = ?"
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {
 		return err
@@ -52,7 +52,7 @@ func (user *User) Login() error {
 	defer stmt.Close()
 
 	var requiredPassword string
-	err = stmt.QueryRow(user.Email).Scan(&requiredPassword)
+	err = stmt.QueryRow(user.Email).Scan(&requiredPassword, &user.ID)
 	if err == sql.ErrNoRows {
 		return errors.New("No user with this email exists")
 	} else if err != nil {
@@ -60,7 +60,7 @@ func (user *User) Login() error {
 	}
 
 	if !utils.CheckPasswordHash(user.Password, requiredPassword) {
-		return errors.New("Invalid password")
+		return errors.New("Invalid credentials")
 	}
 
 	return nil

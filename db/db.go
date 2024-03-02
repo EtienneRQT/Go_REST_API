@@ -2,6 +2,8 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
+
 	// Imports the sqlite3 driver from github.com/mattn/go-sqlite3.
 	// This allows connecting to and querying SQLite databases.
 	_ "github.com/mattn/go-sqlite3"
@@ -25,34 +27,30 @@ func InitDB() {
 	createTables()
 }
 
-// createTables initializes the database by creating the users and events tables.
-// It creates each table by executing a SQL CREATE TABLE statement.
-// If there is an error creating a table, it panics.
+const (
+	createUsersTable = `CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL);`
+
+	createEventsTable = `CREATE TABLE IF NOT EXISTS events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL, 
+        description TEXT NOT NULL,  
+        location TEXT NOT NULL, 
+        dateTime DATETIME NOT NULL, 
+        user_id INTEGER NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id));`
+)
+
+// createTables creates the users and events tables if they do not already exist.
+// It executes a combined SQL statement containing CREATE TABLE IF NOT EXISTS for both tables.
+// If there is an error executing the SQL, it will panic with the error message.
 func createTables() {
-	createUsersTable := `CREATE TABLE IF NOT EXISTS users (
-		id INTEGER PRIMARY KEY AUTOINCREMENT, 
-		username UNIQUE TEXT NOT NULL,
-		email UNIQUE TEXT NOT NULL,
-		password TEXT NOT NULL)`
-
-	_, err := DB.Exec(createUsersTable)
+	createTablesQuery := createUsersTable + "\n" + createEventsTable
+	_, err := DB.Exec(createTablesQuery)
 
 	if err != nil {
-		panic("Could not create users table.")
-	}
-
-	createEventsTable := `CREATE TABLE IF NOT EXISTS events (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT NOT NULL, 
-		description TEXT NOT NULL,  
-		location TEXT NOT NULL, 
-		dateTime DATETIME NOT NULL, 
-		user_id INTEGER NOT NULL,
-		FOREIGN KEY (user_id) REFERENCES users(id))`
-
-	_, err = DB.Exec(createEventsTable)
-
-	if err != nil {
-		panic("Could not create events table.")
+		panic(fmt.Sprintf("Could not create tables: %v", err))
 	}
 }
