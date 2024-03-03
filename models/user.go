@@ -25,8 +25,13 @@ func (user *User) Save() error {
 	if err != nil {
 		return err
 	}
+
 	defer stmt.Close()
-	hashedPassword := utils.HashPassword(user.Password)
+	hashedPassword, err := utils.HashPassword(user.Password)
+	if err != nil {
+		return err
+	}
+
 	result, err := stmt.Exec(user.Email, hashedPassword)
 	if err != nil {
 		return err
