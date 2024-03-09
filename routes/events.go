@@ -41,7 +41,6 @@ func getEvents(context *gin.Context) {
 	context.JSON(http.StatusOK, events)
 }
 
-
 // createEvent handles POST requests to create a new event.
 // It first verifies the JWT authorization token.
 // It then binds the event data from the request body.
@@ -54,7 +53,7 @@ func createEvent(context *gin.Context) {
 		return
 	}
 
-	err := utils.VerifyToken(token)
+	userID, err := utils.VerifyToken(token)
 	if err != nil {
 		context.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
 		return
@@ -66,6 +65,8 @@ func createEvent(context *gin.Context) {
 		return
 	}
 
+	intUserID := int64(userID)
+	event.UserID = intUserID
 	err = event.Save()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, err.Error())
