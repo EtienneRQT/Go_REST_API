@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"example.com/api/db"
+	"github.com/EtienneRQT/Go_REST_API/db"
 )
 
 // Event represents an event with ID, name, description, location, date/time, and user ID fields.

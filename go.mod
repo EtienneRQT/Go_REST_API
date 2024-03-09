@@ -1,4 +1,4 @@
-module example.com/api
+module github.com/EtienneRQT/Go_REST_API
 
 go 1.18
 

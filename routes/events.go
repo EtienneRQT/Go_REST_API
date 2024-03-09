@@ -4,7 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"example.com/api/models"
+	"github.com/EtienneRQT/Go_REST_API/models"
+	"github.com/EtienneRQT/Go_REST_API/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,21 +41,37 @@ func getEvents(context *gin.Context) {
 	context.JSON(http.StatusOK, events)
 }
 
+
 // createEvent handles POST requests to create a new event.
-// It binds the request body to an Event struct, validates the data,
-// saves the event to the database, and returns the created event
-// with 201 Created status code on success, or error responses on failure.
+// It first verifies the JWT authorization token.
+// It then binds the event data from the request body.
+// The event is saved to the database, returning 201 Created if successful,
+// or an error response if there is an error binding or saving the event.
 func createEvent(context *gin.Context) {
+	token := context.Request.Header.Get("Authorization")
+	if token == "" {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+
+	err := utils.VerifyToken(token)
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+
 	var event models.Event
 	if err := context.BindJSON(&event); err != nil {
 		context.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	err := event.Save()
+
+	err = event.Save()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	context.JSON(http.StatusCreated, event)
 }
 

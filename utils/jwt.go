@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -18,4 +19,38 @@ func GenrateToken(email string, userID int64) (string, error) {
 	})
 
 	return token.SignedString([]byte(secretKey))
+}
+
+// VerifyToken parses and validates the provided JWT token using the
+// secret signing key. Returns nil if the token is valid, otherwise
+// returns an error.
+func VerifyToken(token string) error {
+	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+
+		return []byte(secretKey), nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	tokenIsValid := parsedToken.Valid
+
+	if !tokenIsValid {
+		return fmt.Errorf("Invalid token")
+	}
+
+/* 	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+
+	if !ok {
+		return nil, fmt.Errorf("Invalid claims")
+	} */
+
+	//email := claims["email"].(string)
+	//userId := claims["userID"].(int64)
+
+	return nil
 }

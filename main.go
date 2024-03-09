@@ -1,8 +1,8 @@
 package main
 
 import (
-	"example.com/api/db"
-	"example.com/api/routes"
+	"github.com/EtienneRQT/Go_REST_API/db"
+	"github.com/EtienneRQT/Go_REST_API/routes"
 	"github.com/gin-gonic/gin"
 )
 

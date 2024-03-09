@@ -3,8 +3,8 @@ package routes
 import (
 	"net/http"
 
-	"example.com/api/models"
-	"example.com/api/utils"
+	"github.com/EtienneRQT/Go_REST_API/models"
+	"github.com/EtienneRQT/Go_REST_API/utils"
 	"github.com/gin-gonic/gin"
 )
 

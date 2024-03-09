@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"errors"
 
-	"example.com/api/db"
-	"example.com/api/utils"
+	"github.com/EtienneRQT/Go_REST_API/db"
+	"github.com/EtienneRQT/Go_REST_API/utils"
 )
 
 // User represents a user account with ID, email and password.
