@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/EtienneRQT/Go_REST_API/models"
-	"github.com/EtienneRQT/Go_REST_API/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,11 +19,13 @@ func getEvent(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid ID"})
 		return
 	}
+
 	event, err := models.GetEventByID(eventID)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	context.JSON(http.StatusOK, event)
 }
 
@@ -47,17 +48,6 @@ func getEvents(context *gin.Context) {
 // The event is saved to the database, returning 201 Created if successful,
 // or an error response if there is an error binding or saving the event.
 func createEvent(context *gin.Context) {
-	token := context.Request.Header.Get("Authorization")
-	if token == "" {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
-		return
-	}
-
-	userID, err := utils.VerifyToken(token)
-	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
-		return
-	}
 
 	var event models.Event
 	if err := context.BindJSON(&event); err != nil {
@@ -65,9 +55,9 @@ func createEvent(context *gin.Context) {
 		return
 	}
 
-	intUserID := int64(userID)
-	event.UserID = intUserID
-	err = event.Save()
+	userID := context.GetInt64("userId")
+	event.UserID = userID
+	err := event.Save()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -88,9 +78,20 @@ func updateEvent(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid ID"})
 		return
 	}
-	_, err = models.GetEventByID(eventID)
+
+	userID, exists := context.Get("userId")
+	if !exists {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Unauthorized"})
+		return
+	}
+	event, err := models.GetEventByID(eventID)
 	if err != nil {
 		context.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
+	}
+
+	if event.UserID != userID {
+		context.JSON(http.StatusForbidden, gin.H{"message": "Forbidden"})
+		return
 	}
 
 	var updatedEvent models.Event

@@ -32,6 +32,10 @@ func (user *User) Save() error {
 		return err
 	}
 
+	if hashedPassword == "" {
+		return errors.New("Password is required")
+	}
+
 	result, err := stmt.Exec(user.Email, hashedPassword)
 	if err != nil {
 		return err
@@ -59,7 +63,7 @@ func (user *User) Login() error {
 	var requiredPassword string
 	err = stmt.QueryRow(user.Email).Scan(&requiredPassword, &user.ID)
 	if err == sql.ErrNoRows {
-		return errors.New("No user with this email exists")
+		return errors.New("Invalid credentials")
 	} else if err != nil {
 		return err
 	}

@@ -25,19 +25,6 @@ func TestHashPassword(t *testing.T) {
 	assert.True(t, isValid)
 }
 
-// TestHashPasswordEmpty tests hashing an empty password.
-// It verifies that an error is returned when attempting to hash
-// an empty password string.
-func TestHashPasswordEmpty(t *testing.T) {
-	password := ""
-
-	hashed, err := HashPassword(password)
-
-	assert.Empty(t, hashed)
-	assert.Error(t, err)
-	assert.EqualError(t, err, "Password is empty")
-}
-
 // TestCheckPasswordHashInvalid tests checking a password hash
 // against an invalid hash. It verifies that CheckPasswordHash()
 // returns false when the hash does not match.

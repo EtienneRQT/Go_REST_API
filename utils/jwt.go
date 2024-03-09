@@ -24,7 +24,7 @@ func GenrateToken(email string, userID int64) (string, error) {
 // VerifyToken parses and validates the provided JWT token using the
 // secret signing key. Returns nil if the token is valid, otherwise
 // returns an error.
-func VerifyToken(token string) (float64, error) {
+func VerifyToken(token string) (int64, error) {
 	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
@@ -49,6 +49,6 @@ func VerifyToken(token string) (float64, error) {
 		return 0, fmt.Errorf("Invalid claims")
 	}
 
-	userID := claims["userID"].(float64)
+	userID := int64(claims["userID"].(float64))
 	return userID, nil
 }

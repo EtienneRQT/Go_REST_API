@@ -14,7 +14,7 @@ type Event struct {
 	Description string    `binding:"required"`
 	Location    string    `binding:"required"`
 	DateTime    time.Time `binding:"required"`
-	UserID      int64     `binding:"required"`
+	UserID      int64
 }
 
 // Save inserts the Event into the database.
